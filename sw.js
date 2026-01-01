@@ -1,7 +1,7 @@
 // Service Worker for 2026 Year Planner
-// Version: 2.0.0 - Update this when you make changes to force cache refresh
+// Version: 2.0.1 - Update this when you make changes to force cache refresh
 
-const CACHE_VERSION = 'year-planner-v2.0.0';
+const CACHE_VERSION = 'year-planner-v2.0.1';
 const RUNTIME_CACHE = 'year-planner-runtime';
 
 // Files to cache immediately on install

@@ -1259,7 +1259,24 @@
 
         <!-- Months Section -->
         <div class="months-section">
-            <div class="section-title" style="margin-bottom: 25px;">Monthly Tracking</div>
+            <div class="section-title" style="margin-bottom: 20px;">Monthly Tracking</div>
+
+            <!-- Category Tabs for Monthly Tracking -->
+            <div class="category-tabs" style="margin-bottom: 20px;">
+                <div class="category-tab active monetary" onclick="switchMonthCategory('monetary')">
+                    <span>💰</span> Monetary
+                </div>
+                <div class="category-tab certifications" onclick="switchMonthCategory('certifications')">
+                    <span>🎓</span> Certifications
+                </div>
+                <div class="category-tab skills" onclick="switchMonthCategory('skills')">
+                    <span>⚡</span> Skills
+                </div>
+                <div class="category-tab memberships" onclick="switchMonthCategory('memberships')">
+                    <span>🤝</span> Memberships
+                </div>
+            </div>
+
             <div class="months-grid" id="monthsGrid"></div>
         </div>
 
@@ -1309,6 +1326,7 @@
             memberships: { name: 'Memberships', icon: '🤝', unit: '' }
         };
         let currentCategory = 'monetary';
+        let currentMonthCategory = 'monetary';
         let deferredPrompt;
         let monthlyTrendChart, yearOverviewChart, goalsProgressChart;
 
@@ -1437,6 +1455,24 @@
 
             updateDashboard();
             updateCharts();
+            renderMonths();
+        }
+
+        function switchMonthCategory(category) {
+            currentMonthCategory = category;
+
+            // Update monthly tracking tabs
+            const monthTabs = document.querySelectorAll('.months-section .category-tab');
+            monthTabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            monthTabs.forEach(tab => {
+                if (tab.classList.contains(category)) {
+                    tab.classList.add('active');
+                }
+            });
+
+            // Re-render months with new category
             renderMonths();
         }
 
@@ -2231,10 +2267,11 @@
 
         // Months Grid
         function renderMonths() {
-            const monthlyData = JSON.parse(localStorage.getItem('monthlyValues')) || {};
-            const monthlyLimit = parseFloat(localStorage.getItem('monthlyLimit')) || 0;
-            const monthlyWarning = parseFloat(localStorage.getItem('monthlyWarning')) || 80;
+            const monthlyData = JSON.parse(localStorage.getItem(`monthlyValues-${currentMonthCategory}`)) || {};
+            const monthlyLimit = parseFloat(localStorage.getItem(`monthlyLimit-${currentMonthCategory}`)) || 0;
+            const monthlyWarning = parseFloat(localStorage.getItem(`monthlyWarning-${currentMonthCategory}`)) || 80;
             const grid = document.getElementById('monthsGrid');
+            const unit = categoryLabels[currentMonthCategory].unit;
             grid.innerHTML = '';
 
             months.forEach((month, index) => {
@@ -2260,8 +2297,8 @@
                     <div class="month-name">${month}</div>
                     <div class="month-inputs">
                         <div class="month-input">
-                            <label>Value ($)</label>
-                            <input type="number" value="${value}" placeholder="0" 
+                            <label>${categoryLabels[currentMonthCategory].name} ${unit ? '(' + unit + ')' : '(Count)'}</label>
+                            <input type="number" value="${value}" placeholder="0"
                                 onchange="updateMonthValue(${monthNum}, this.value)" />
                         </div>
                     </div>
@@ -2272,14 +2309,13 @@
         }
 
         function updateMonthValue(monthNum, value) {
-            let monthlyData = JSON.parse(localStorage.getItem('monthlyValues')) || {};
+            let monthlyData = JSON.parse(localStorage.getItem(`monthlyValues-${currentMonthCategory}`)) || {};
             if (value) {
                 monthlyData[`month_${monthNum}`] = parseFloat(value);
             } else {
                 delete monthlyData[`month_${monthNum}`];
             }
-            localStorage.setItem('monthlyValues', JSON.stringify(monthlyData));
-            updateStats();
+            localStorage.setItem(`monthlyValues-${currentMonthCategory}`, JSON.stringify(monthlyData));
             renderMonths();
             updateDashboard();
             updateCharts();
