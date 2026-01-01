@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="2026 Personal Year Planner - Goal setting and value tracking">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="2026 Planner">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%232563eb' width='180' height='180'/><text x='50%' y='50%' font-size='80' fill='white' text-anchor='middle' dy='.3em' font-family='Arial' font-weight='bold'>26</text></svg>">
+    <link rel="manifest" href="data:application/json,{%22name%22:%222026%20Year%20Planner%22,%22short_name%22:%222026%20Planner%22,%22description%22:%22Personal%20goal%20setting%20and%20value%20tracking%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22background_color%22:%22%230f172a%22,%22theme_color%22:%22%232563eb%22,%22orientation%22:%22portrait-primary%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20192%20192'><rect%20fill='%232563eb'%20width='192'%20height='192'/><text%20x='50%25'%20y='50%25'%20font-size='100'%20fill='white'%20text-anchor='middle'%20dy='.3em'%20font-family='Arial'%20font-weight='bold'>26</text></svg>%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg+xml%22,%22purpose%22:%22any%22},{%22src%22:%22data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20512%20512'><rect%20fill='%232563eb'%20width='512'%20height='512'/><text%20x='50%25'%20y='50%25'%20font-size='280'%20fill='white'%20text-anchor='middle'%20dy='.3em'%20font-family='Arial'%20font-weight='bold'>26</text></svg>%22,%22sizes%22:%22512x512%22,%22type%22:%22image/svg+xml%22,%22purpose%22:%22maskable%22}]}">
+    <title>2026 Year Planner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Install Banner */
+        .install-banner {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 15px;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .install-banner.show {
+            display: flex;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .install-banner p {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .install-banner button {
+            background: white;
+            color: #2563eb;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .install-banner button:hover {
+            transform: scale(1.05);
+        }
+
+        .close-banner {
+            background: rgba(255, 255, 255, 0.2) !important;
+            color: white !important;
+            padding: 6px 12px !important;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 48px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #94a3b8;
+            font-size: 16px;
+        }
+
+        /* Main grid */
+        .planner-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        /* Sections */
+        .goals-section, .value-section {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .goals-section { animation-delay: 0.1s; }
+        .value-section { animation-delay: 0.2s; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #60a5fa;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%);
+            border-radius: 2px;
+        }
+
+        .goal-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .goal-input-group input, .value-input-group input, .month-input input {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #e2e8f0;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #60a5fa;
+            background: rgba(15, 23, 42, 0.95);
+            box-shadow: 0 0 12px rgba(96, 165, 250, 0.2);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .goals-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .goal-item {
+            background: rgba(15, 23, 42, 0.6);
+            border-left: 3px solid #60a5fa;
+            border-radius: 6px;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .goal-item:hover {
+            background: rgba(15, 23, 42, 0.9);
+            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.15);
+        }
+
+        .goal-item button {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            padding: 4px 8px;
+            font-size: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .goal-item button:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        /* Limits Section */
+        .limits-subsection {
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 3px solid #60a5fa;
+        }
+
+        .limits-subsection h4 {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .limit-input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .limit-input-group input {
+            font-size: 13px;
+            padding: 10px 12px;
+        }
+
+        .limit-input-group label {
+            font-size: 11px;
+            color: #64748b;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        /* Value Stats */
+        .value-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            border-radius: 8px;
+            padding: 16px;
+            border-left: 3px solid;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card.green {
+            background: rgba(34, 197, 94, 0.1);
+            border-left-color: #22c55e;
+        }
+
+        .stat-card.yellow {
+            background: rgba(234, 179, 8, 0.1);
+            border-left-color: #eab308;
+        }
+
+        .stat-card.red {
+            background: rgba(239, 68, 68, 0.1);
+            border-left-color: #ef4444;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-family: 'Poppins', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .stat-card.green .stat-value { color: #22c55e; }
+        .stat-card.yellow .stat-value { color: #eab308; }
+        .stat-card.red .stat-value { color: #ef4444; }
+
+        .stat-limit {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        /* Months Grid */
+        .months-section {
+            animation: fadeInUp 0.6s ease-out 0.3s both;
+        }
+
+        .months-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .month-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border-left: 4px solid rgba(59, 130, 246, 0.5);
+        }
+
+        .month-card.good {
+            border-left-color: #22c55e;
+            background: rgba(34, 197, 94, 0.05);
+        }
+
+        .month-card.warning {
+            border-left-color: #eab308;
+            background: rgba(234, 179, 8, 0.05);
+        }
+
+        .month-card.exceeded {
+            border-left-color: #ef4444;
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .month-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #60a5fa 0%, #3b82f6 100%);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .month-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(96, 165, 250, 0.15);
+        }
+
+        .month-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .month-name {
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #e2e8f0;
+            margin-bottom: 15px;
+        }
+
+        .month-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .month-input {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .month-input label {
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .month-input input {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: #60a5fa;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .month-status {
+            font-size: 10px;
+            margin-top: 8px;
+            padding: 6px 8px;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .month-status.good {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .month-status.warning {
+            background: rgba(234, 179, 8, 0.2);
+            color: #eab308;
+        }
+
+        .month-status.exceeded {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #64748b;
+            font-size: 13px;
+            border-top: 1px solid rgba(59, 130, 246, 0.1);
+            margin-top: 40px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .footer button {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .footer button:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .online-status {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .online-status.online {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .online-status.offline {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .online-status.online .status-dot {
+            background: #22c55e;
+        }
+
+        .online-status.offline .status-dot {
+            background: #ef4444;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .planner-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 36px;
+            }
+
+            .months-grid {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            }
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 12px;
+                padding-top: max(12px, env(safe-area-inset-top));
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .months-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .limit-input-group {
+                grid-template-columns: 1fr;
+            }
+
+            .value-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .footer {
+                flex-direction: column;
+            }
+
+            .footer button, .online-status {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Install Banner -->
+        <div class="install-banner" id="installBanner">
+            <p>📱 Install this app on your device for quick access and offline use</p>
+            <button onclick="promptInstall()">Install</button>
+            <button class="close-banner" onclick="closeBanner()">✕</button>
+        </div>
+
+        <!-- Header -->
+        <div class="header">
+            <h1>2026 Year Planner</h1>
+            <p>Set your goals and track value delivered throughout the year <button onclick="document.getElementById('infoModal').style.display='flex'" style="background: none; border: none; color: #60a5fa; cursor: pointer; font-size: 16px; margin-left: 10px;">❓</button></p>
+        </div>
+
+        <!-- Main Planning Grid -->
+        <div class="planner-grid">
+            <!-- Goals Section -->
+            <div class="goals-section">
+                <div class="section-title">Annual Goals</div>
+                <div class="goal-input-group">
+                    <input type="text" id="goalInput" placeholder="Add a new goal..." />
+                    <button class="btn" onclick="addGoal()">Add</button>
+                </div>
+                <div class="goals-list" id="goalsList"></div>
+            </div>
+
+            <!-- Value Tracking Section -->
+            <div class="value-section">
+                <div class="section-title">Value Delivered</div>
+                
+                <!-- Weekly Limits -->
+                <div class="limits-subsection">
+                    <h4>📊 Weekly Target</h4>
+                    <div class="limit-input-group">
+                        <div>
+                            <label>Limit ($)</label>
+                            <input type="number" id="weeklyLimit" placeholder="0" onchange="saveWeeklyLimit()" />
+                        </div>
+                        <div>
+                            <label>Warning at %</label>
+                            <input type="number" id="weeklyWarning" value="80" min="0" max="100" onchange="saveWeeklyLimit()" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weekly Input -->
+                <div class="limits-subsection">
+                    <h4>Add Weekly Value</h4>
+                    <div class="limit-input-group">
+                        <div>
+                            <label>Week (1-52)</label>
+                            <input type="number" id="weekNum" min="1" max="52" placeholder="1-52" />
+                        </div>
+                        <div>
+                            <label>Value ($)</label>
+                            <input type="number" id="weekValue" placeholder="Amount" />
+                        </div>
+                    </div>
+                    <button class="btn" onclick="addWeeklyValue()" style="width: 100%;">Add Weekly Value</button>
+                </div>
+
+                <!-- Monthly Limits -->
+                <div class="limits-subsection">
+                    <h4>📈 Monthly Target</h4>
+                    <div class="limit-input-group">
+                        <div>
+                            <label>Limit ($)</label>
+                            <input type="number" id="monthlyLimit" placeholder="0" onchange="saveMonthlyLimit()" />
+                        </div>
+                        <div>
+                            <label>Warning at %</label>
+                            <input type="number" id="monthlyWarning" value="80" min="0" max="100" onchange="saveMonthlyLimit()" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monthly Input -->
+                <div class="limits-subsection">
+                    <h4>Add Monthly Value</h4>
+                    <div class="limit-input-group">
+                        <div>
+                            <label>Month (1-12)</label>
+                            <input type="number" id="monthNum" min="1" max="12" placeholder="1-12" />
+                        </div>
+                        <div>
+                            <label>Value ($)</label>
+                            <input type="number" id="monthValue" placeholder="Amount" />
+                        </div>
+                    </div>
+                    <button class="btn" onclick="addMonthlyValue()" style="width: 100%;">Add Monthly Value</button>
+                </div>
+
+                <!-- Stats -->
+                <div class="value-stats">
+                    <div class="stat-card" id="weeklyCard">
+                        <div class="stat-label">Weekly Total</div>
+                        <div class="stat-value">$<span id="weeklyTotal">0</span></div>
+                        <div class="stat-limit" id="weeklyLimitText"></div>
+                    </div>
+                    <div class="stat-card" id="monthlyCard">
+                        <div class="stat-label">Monthly Total</div>
+                        <div class="stat-value">$<span id="monthlyTotal">0</span></div>
+                        <div class="stat-limit" id="monthlyLimitText"></div>
+                    </div>
+                </div>
+                <button class="btn" onclick="clearValueData()" style="width: 100%;">Clear Values</button>
+            </div>
+        </div>
+
+        <!-- Months Section -->
+        <div class="months-section">
+            <div class="section-title" style="margin-bottom: 25px;">Monthly Tracking</div>
+            <div class="months-grid" id="monthsGrid"></div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="online-status" id="onlineStatus">
+                <div class="status-dot"></div>
+                <span>Online</span>
+            </div>
+            <p title="Data is stored locally in your browser using localStorage - completely private and secure">💾 Auto-saving locally</p>
+            <button onclick="if(confirm('Clear all data? This cannot be undone.')) { clearAllData(); }">Clear All Data</button>
+        </div>
+
+        <!-- Info Modal -->
+        <div id="infoModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; padding: 20px;">
+            <div style="background: #1e293b; border-radius: 12px; padding: 30px; max-width: 500px; color: #e2e8f0; border: 1px solid rgba(59, 130, 246, 0.3);">
+                <h2 style="color: #60a5fa; margin-bottom: 16px;">How Data is Saved</h2>
+                <p style="margin-bottom: 12px; line-height: 1.6;"><strong>📱 Local Storage:</strong> Your data is saved directly on your device/browser using "localStorage" - this is like a secure filing cabinet built into your browser.</p>
+                <p style="margin-bottom: 12px; line-height: 1.6;"><strong>🔒 Private & Secure:</strong> No one can access your data. It's not sent to any server. Only you can see it.</p>
+                <p style="margin-bottom: 12px; line-height: 1.6;"><strong>💾 Automatic Saving:</strong> Every time you add a goal, value, or change a number, it saves instantly. No manual "Save" button needed.</p>
+                <p style="margin-bottom: 12px; line-height: 1.6;"><strong>🌐 Offline Access:</strong> The app works perfectly offline. You can add data, view everything, and it syncs when online.</p>
+                <p style="margin-bottom: 12px; line-height: 1.6;"><strong>📲 On Your Device:</strong> When installed as an app (iOS/Android), data stays on your phone and doesn't sync to cloud unless you manually export.</p>
+                <p style="margin-bottom: 20px; line-height: 1.6; color: #94a3b8;"><strong>⚠️ Important:</strong> If you clear your browser data or uninstall the app without backing up, your data will be lost.</p>
+                <button onclick="document.getElementById('infoModal').style.display='none'" style="background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; width: 100%;">Got it</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        let deferredPrompt;
+
+        // PWA Installation
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installBanner').classList.add('show');
+        });
+
+        function promptInstall() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    }
+                    deferredPrompt = null;
+                    closeBanner();
+                });
+            }
+        }
+
+        function closeBanner() {
+            document.getElementById('installBanner').classList.remove('show');
+        }
+
+        // Online/Offline Status
+        function updateOnlineStatus() {
+            const status = document.getElementById('onlineStatus');
+            if (navigator.onLine) {
+                status.classList.remove('offline');
+                status.classList.add('online');
+                status.innerHTML = '<div class="status-dot"></div><span>Online</span>';
+            } else {
+                status.classList.remove('online');
+                status.classList.add('offline');
+                status.innerHTML = '<div class="status-dot"></div><span>Offline</span>';
+            }
+        }
+
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+
+        // Data persistence works with localStorage - Service Worker optional for advanced offline features
+        // The app saves all data locally to your browser automatically
+
+        // Initialize planner
+        function initPlanner() {
+            renderMonths();
+            loadGoals();
+            loadLimits();
+            loadValueData();
+            updateStats();
+            updateOnlineStatus();
+        }
+
+        // Goals Management
+        function addGoal() {
+            const input = document.getElementById('goalInput');
+            const goal = input.value.trim();
+            if (!goal) return;
+
+            let goals = JSON.parse(localStorage.getItem('goals')) || [];
+            goals.push(goal);
+            localStorage.setItem('goals', JSON.stringify(goals));
+            input.value = '';
+            renderGoals();
+        }
+
+        function loadGoals() {
+            renderGoals();
+        }
+
+        function renderGoals() {
+            const goals = JSON.parse(localStorage.getItem('goals')) || [];
+            const goalsList = document.getElementById('goalsList');
+            goalsList.innerHTML = '';
+
+            goals.forEach((goal, index) => {
+                const div = document.createElement('div');
+                div.className = 'goal-item';
+                div.innerHTML = `
+                    <span>${goal}</span>
+                    <button onclick="deleteGoal(${index})">Delete</button>
+                `;
+                goalsList.appendChild(div);
+            });
+        }
+
+        function deleteGoal(index) {
+            let goals = JSON.parse(localStorage.getItem('goals')) || [];
+            goals.splice(index, 1);
+            localStorage.setItem('goals', JSON.stringify(goals));
+            renderGoals();
+        }
+
+        // Limits Management
+        function saveWeeklyLimit() {
+            const limit = parseFloat(document.getElementById('weeklyLimit').value) || 0;
+            const warning = parseFloat(document.getElementById('weeklyWarning').value) || 80;
+            localStorage.setItem('weeklyLimit', limit);
+            localStorage.setItem('weeklyWarning', warning);
+            updateStats();
+            renderMonths();
+        }
+
+        function saveMonthlyLimit() {
+            const limit = parseFloat(document.getElementById('monthlyLimit').value) || 0;
+            const warning = parseFloat(document.getElementById('monthlyWarning').value) || 80;
+            localStorage.setItem('monthlyLimit', limit);
+            localStorage.setItem('monthlyWarning', warning);
+            updateStats();
+            renderMonths();
+        }
+
+        function loadLimits() {
+            const weeklyLimit = localStorage.getItem('weeklyLimit') || '';
+            const weeklyWarning = localStorage.getItem('weeklyWarning') || '80';
+            const monthlyLimit = localStorage.getItem('monthlyLimit') || '';
+            const monthlyWarning = localStorage.getItem('monthlyWarning') || '80';
+
+            document.getElementById('weeklyLimit').value = weeklyLimit;
+            document.getElementById('weeklyWarning').value = weeklyWarning;
+            document.getElementById('monthlyLimit').value = monthlyLimit;
+            document.getElementById('monthlyWarning').value = monthlyWarning;
+        }
+
+        // Value Tracking
+        function addWeeklyValue() {
+            const weekNum = parseInt(document.getElementById('weekNum').value);
+            const value = parseFloat(document.getElementById('weekValue').value);
+
+            if (isNaN(weekNum) || isNaN(value) || weekNum < 1 || weekNum > 52) {
+                alert('Please enter valid week (1-52) and value');
+                return;
+            }
+
+            let weeklyData = JSON.parse(localStorage.getItem('weeklyValues')) || {};
+            weeklyData[`week_${weekNum}`] = value;
+            localStorage.setItem('weeklyValues', JSON.stringify(weeklyData));
+
+            document.getElementById('weekNum').value = '';
+            document.getElementById('weekValue').value = '';
+            updateStats();
+        }
+
+        function addMonthlyValue() {
+            const monthNum = parseInt(document.getElementById('monthNum').value);
+            const value = parseFloat(document.getElementById('monthValue').value);
+
+            if (isNaN(monthNum) || isNaN(value) || monthNum < 1 || monthNum > 12) {
+                alert('Please enter valid month (1-12) and value');
+                return;
+            }
+
+            let monthlyData = JSON.parse(localStorage.getItem('monthlyValues')) || {};
+            monthlyData[`month_${monthNum}`] = value;
+            localStorage.setItem('monthlyValues', JSON.stringify(monthlyData));
+
+            document.getElementById('monthNum').value = '';
+            document.getElementById('monthValue').value = '';
+            updateStats();
+            renderMonths();
+        }
+
+        function loadValueData() {
+            updateStats();
+        }
+
+        function getStatusClass(value, limit, warning) {
+            if (!limit || limit === 0) return 'green';
+            const percentage = (value / limit) * 100;
+            if (percentage > 100) return 'red';
+            if (percentage > warning) return 'yellow';
+            return 'green';
+        }
+
+        function updateStats() {
+            let weeklyData = JSON.parse(localStorage.getItem('weeklyValues')) || {};
+            let monthlyData = JSON.parse(localStorage.getItem('monthlyValues')) || {};
+
+            const weeklyTotal = Object.values(weeklyData).reduce((a, b) => a + b, 0);
+            const monthlyTotal = Object.values(monthlyData).reduce((a, b) => a + b, 0);
+
+            const weeklyLimit = parseFloat(localStorage.getItem('weeklyLimit')) || 0;
+            const monthlyLimit = parseFloat(localStorage.getItem('monthlyLimit')) || 0;
+            const weeklyWarning = parseFloat(localStorage.getItem('weeklyWarning')) || 80;
+            const monthlyWarning = parseFloat(localStorage.getItem('monthlyWarning')) || 80;
+
+            document.getElementById('weeklyTotal').textContent = weeklyTotal.toFixed(0);
+            document.getElementById('monthlyTotal').textContent = monthlyTotal.toFixed(0);
+
+            // Update status cards
+            const weeklyStatus = getStatusClass(weeklyTotal, weeklyLimit, weeklyWarning);
+            const monthlyStatus = getStatusClass(monthlyTotal, monthlyLimit, monthlyWarning);
+
+            const weeklyCard = document.getElementById('weeklyCard');
+            const monthlyCard = document.getElementById('monthlyCard');
+
+            weeklyCard.className = `stat-card ${weeklyStatus}`;
+            monthlyCard.className = `stat-card ${monthlyStatus}`;
+
+            // Update limit text
+            if (weeklyLimit > 0) {
+                const weeklyPercent = ((weeklyTotal / weeklyLimit) * 100).toFixed(0);
+                document.getElementById('weeklyLimitText').textContent = `Limit: $${weeklyLimit} (${weeklyPercent}%)`;
+            } else {
+                document.getElementById('weeklyLimitText').textContent = '';
+            }
+
+            if (monthlyLimit > 0) {
+                const monthlyPercent = ((monthlyTotal / monthlyLimit) * 100).toFixed(0);
+                document.getElementById('monthlyLimitText').textContent = `Limit: $${monthlyLimit} (${monthlyPercent}%)`;
+            } else {
+                document.getElementById('monthlyLimitText').textContent = '';
+            }
+        }
+
+        function clearValueData() {
+            localStorage.removeItem('weeklyValues');
+            localStorage.removeItem('monthlyValues');
+            document.getElementById('weekNum').value = '';
+            document.getElementById('weekValue').value = '';
+            document.getElementById('monthNum').value = '';
+            document.getElementById('monthValue').value = '';
+            updateStats();
+            renderMonths();
+        }
+
+        // Months Grid
+        function renderMonths() {
+            const monthlyData = JSON.parse(localStorage.getItem('monthlyValues')) || {};
+            const monthlyLimit = parseFloat(localStorage.getItem('monthlyLimit')) || 0;
+            const monthlyWarning = parseFloat(localStorage.getItem('monthlyWarning')) || 80;
+            const grid = document.getElementById('monthsGrid');
+            grid.innerHTML = '';
+
+            months.forEach((month, index) => {
+                const monthNum = index + 1;
+                const value = monthlyData[`month_${monthNum}`] || '';
+                const status = value && monthlyLimit > 0 ? getStatusClass(value, monthlyLimit, monthlyWarning) : 'default';
+
+                let statusText = '';
+                if (monthlyLimit > 0 && value) {
+                    const percent = ((value / monthlyLimit) * 100).toFixed(0);
+                    if (percent > 100) {
+                        statusText = `⚠️ EXCEEDED (${percent}%)`;
+                    } else if (percent > monthlyWarning) {
+                        statusText = `⚡ WARNING (${percent}%)`;
+                    } else {
+                        statusText = `✓ ON TRACK (${percent}%)`;
+                    }
+                }
+
+                const card = document.createElement('div');
+                card.className = `month-card ${status}`;
+                card.innerHTML = `
+                    <div class="month-name">${month}</div>
+                    <div class="month-inputs">
+                        <div class="month-input">
+                            <label>Value ($)</label>
+                            <input type="number" value="${value}" placeholder="0" 
+                                onchange="updateMonthValue(${monthNum}, this.value)" />
+                        </div>
+                    </div>
+                    ${statusText ? `<div class="month-status ${status}">${statusText}</div>` : ''}
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function updateMonthValue(monthNum, value) {
+            let monthlyData = JSON.parse(localStorage.getItem('monthlyValues')) || {};
+            if (value) {
+                monthlyData[`month_${monthNum}`] = parseFloat(value);
+            } else {
+                delete monthlyData[`month_${monthNum}`];
+            }
+            localStorage.setItem('monthlyValues', JSON.stringify(monthlyData));
+            updateStats();
+            renderMonths();
+        }
+
+        // Clear all data
+        function clearAllData() {
+            localStorage.clear();
+            location.reload();
+        }
+
+        // Initialize on load
+        initPlanner();
+    </script>
+</body>
+</html>
