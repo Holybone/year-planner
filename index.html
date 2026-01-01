@@ -844,6 +844,88 @@
             transform: translateY(-1px);
         }
 
+        /* Category Tabs for Value Tracking */
+        .category-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .category-tab {
+            padding: 10px 16px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .category-tab:hover {
+            border-color: #60a5fa;
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .category-tab.active {
+            color: white;
+            font-weight: 600;
+        }
+
+        .category-tab.active.monetary {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            border-color: #3b82f6;
+        }
+
+        .category-tab.active.certifications {
+            background: linear-gradient(135deg, #9333ea 0%, #7e22ce 100%);
+            border-color: #a855f7;
+        }
+
+        .category-tab.active.skills {
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            border-color: #22c55e;
+        }
+
+        .category-tab.active.memberships {
+            background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+            border-color: #f97316;
+        }
+
+        .category-content {
+            display: none;
+        }
+
+        .category-content.active {
+            display: block;
+        }
+
+        /* Category Color Variants */
+        .stat-card.monetary {
+            border-left-color: #3b82f6;
+        }
+
+        .stat-card.certifications {
+            border-left-color: #a855f7;
+        }
+
+        .stat-card.skills {
+            border-left-color: #22c55e;
+        }
+
+        .stat-card.memberships {
+            border-left-color: #f97316;
+        }
+
+        .stat-card.overall {
+            border-left-color: #facc15;
+        }
+
         /* Export/Import Section */
         .export-section {
             background: rgba(30, 41, 59, 0.5);
@@ -949,20 +1031,40 @@
                     <div class="dashboard-value" id="goalCompletionRate">0%</div>
                     <div class="dashboard-label">Goals Completed</div>
                 </div>
-                <div class="dashboard-card">
+                <div class="dashboard-card monetary">
                     <div class="dashboard-icon">💰</div>
-                    <div class="dashboard-value" id="ytdTotal">$0</div>
-                    <div class="dashboard-label">Year-to-Date Total</div>
+                    <div class="dashboard-value" id="ytdMonetary">$0</div>
+                    <div class="dashboard-label">Total Monetary</div>
                 </div>
-                <div class="dashboard-card">
+                <div class="dashboard-card certifications">
+                    <div class="dashboard-icon">🎓</div>
+                    <div class="dashboard-value" id="ytdCertifications">0</div>
+                    <div class="dashboard-label">Total Certifications</div>
+                </div>
+                <div class="dashboard-card skills">
+                    <div class="dashboard-icon">⚡</div>
+                    <div class="dashboard-value" id="ytdSkills">0</div>
+                    <div class="dashboard-label">Total Skills</div>
+                </div>
+                <div class="dashboard-card memberships">
+                    <div class="dashboard-icon">🤝</div>
+                    <div class="dashboard-value" id="ytdMemberships">0</div>
+                    <div class="dashboard-label">Total Memberships</div>
+                </div>
+                <div class="dashboard-card monetary">
                     <div class="dashboard-icon">📊</div>
-                    <div class="dashboard-value" id="avgMonthly">$0</div>
-                    <div class="dashboard-label">Average Monthly</div>
+                    <div class="dashboard-value" id="avgMonetary">$0</div>
+                    <div class="dashboard-label">Avg Monthly ($)</div>
                 </div>
-                <div class="dashboard-card">
+                <div class="dashboard-card overall">
                     <div class="dashboard-icon">⭐</div>
-                    <div class="dashboard-value" id="bestMonth">-</div>
-                    <div class="dashboard-label">Best Month</div>
+                    <div class="dashboard-value" id="bestCategory">-</div>
+                    <div class="dashboard-label">Top Category</div>
+                </div>
+                <div class="dashboard-card overall">
+                    <div class="dashboard-icon">🚀</div>
+                    <div class="dashboard-value" id="overallProgress">0%</div>
+                    <div class="dashboard-label">Overall Progress</div>
                 </div>
             </div>
         </div>
@@ -1001,83 +1103,157 @@
             <!-- Value Tracking Section -->
             <div class="value-section">
                 <div class="section-title">Value Delivered</div>
-                
-                <!-- Weekly Limits -->
-                <div class="limits-subsection">
-                    <h4>📊 Weekly Target</h4>
-                    <div class="limit-input-group">
-                        <div>
-                            <label>Limit ($)</label>
-                            <input type="number" id="weeklyLimit" placeholder="0" onchange="saveWeeklyLimit()" />
-                        </div>
-                        <div>
-                            <label>Warning at %</label>
-                            <input type="number" id="weeklyWarning" value="80" min="0" max="100" onchange="saveWeeklyLimit()" />
-                        </div>
+
+                <!-- Category Tabs -->
+                <div class="category-tabs">
+                    <div class="category-tab active monetary" onclick="switchCategory('monetary')">
+                        <span>💰</span> Monetary
+                    </div>
+                    <div class="category-tab certifications" onclick="switchCategory('certifications')">
+                        <span>🎓</span> Certifications
+                    </div>
+                    <div class="category-tab skills" onclick="switchCategory('skills')">
+                        <span>⚡</span> Skills
+                    </div>
+                    <div class="category-tab memberships" onclick="switchCategory('memberships')">
+                        <span>🤝</span> Memberships
                     </div>
                 </div>
 
-                <!-- Weekly Input -->
-                <div class="limits-subsection">
-                    <h4>Add Weekly Value</h4>
-                    <div class="limit-input-group">
-                        <div>
-                            <label>Week (1-52)</label>
-                            <input type="number" id="weekNum" min="1" max="52" placeholder="1-52" />
-                        </div>
-                        <div>
-                            <label>Value ($)</label>
-                            <input type="number" id="weekValue" placeholder="Amount" />
+                <!-- Category Content Containers -->
+                <div class="category-content active" id="content-monetary">
+                    <!-- Monthly Limits -->
+                    <div class="limits-subsection">
+                        <h4>📈 Monthly Target</h4>
+                        <div class="limit-input-group">
+                            <div>
+                                <label>Limit ($)</label>
+                                <input type="number" id="monthlyLimit-monetary" placeholder="0" onchange="saveCategoryLimit('monetary')" />
+                            </div>
+                            <div>
+                                <label>Warning at %</label>
+                                <input type="number" id="monthlyWarning-monetary" value="80" min="0" max="100" onchange="saveCategoryLimit('monetary')" />
+                            </div>
                         </div>
                     </div>
-                    <button class="btn" onclick="addWeeklyValue()" style="width: 100%;">Add Weekly Value</button>
+
+                    <!-- Monthly Input -->
+                    <div class="limits-subsection">
+                        <h4>Add Monthly Value</h4>
+                        <div class="limit-input-group">
+                            <div>
+                                <label>Month (1-12)</label>
+                                <input type="number" id="monthNum-monetary" min="1" max="12" placeholder="1-12" />
+                            </div>
+                            <div>
+                                <label>Value ($)</label>
+                                <input type="number" id="monthValue-monetary" placeholder="Amount" />
+                            </div>
+                        </div>
+                        <button class="btn" onclick="addCategoryValue('monetary')" style="width: 100%;">Add Value</button>
+                    </div>
                 </div>
 
-                <!-- Monthly Limits -->
-                <div class="limits-subsection">
-                    <h4>📈 Monthly Target</h4>
-                    <div class="limit-input-group">
-                        <div>
-                            <label>Limit ($)</label>
-                            <input type="number" id="monthlyLimit" placeholder="0" onchange="saveMonthlyLimit()" />
+                <div class="category-content" id="content-certifications">
+                    <!-- Monthly Limits -->
+                    <div class="limits-subsection">
+                        <h4>📈 Monthly Target</h4>
+                        <div class="limit-input-group">
+                            <div>
+                                <label>Limit (Count)</label>
+                                <input type="number" id="monthlyLimit-certifications" placeholder="0" onchange="saveCategoryLimit('certifications')" />
+                            </div>
+                            <div>
+                                <label>Warning at %</label>
+                                <input type="number" id="monthlyWarning-certifications" value="80" min="0" max="100" onchange="saveCategoryLimit('certifications')" />
+                            </div>
                         </div>
-                        <div>
-                            <label>Warning at %</label>
-                            <input type="number" id="monthlyWarning" value="80" min="0" max="100" onchange="saveMonthlyLimit()" />
+                    </div>
+
+                    <!-- Monthly Input -->
+                    <div class="limits-subsection">
+                        <h4>Add Monthly Certifications</h4>
+                        <div class="limit-input-group">
+                            <div>
+                                <label>Month (1-12)</label>
+                                <input type="number" id="monthNum-certifications" min="1" max="12" placeholder="1-12" />
+                            </div>
+                            <div>
+                                <label>Count</label>
+                                <input type="number" id="monthValue-certifications" placeholder="Number earned" />
+                            </div>
                         </div>
+                        <button class="btn" onclick="addCategoryValue('certifications')" style="width: 100%;">Add Certifications</button>
                     </div>
                 </div>
 
-                <!-- Monthly Input -->
-                <div class="limits-subsection">
-                    <h4>Add Monthly Value</h4>
-                    <div class="limit-input-group">
-                        <div>
-                            <label>Month (1-12)</label>
-                            <input type="number" id="monthNum" min="1" max="12" placeholder="1-12" />
-                        </div>
-                        <div>
-                            <label>Value ($)</label>
-                            <input type="number" id="monthValue" placeholder="Amount" />
+                <div class="category-content" id="content-skills">
+                    <!-- Monthly Limits -->
+                    <div class="limits-subsection">
+                        <h4>📈 Monthly Target</h4>
+                        <div class="limit-input-group">
+                            <div>
+                                <label>Limit (Count)</label>
+                                <input type="number" id="monthlyLimit-skills" placeholder="0" onchange="saveCategoryLimit('skills')" />
+                            </div>
+                            <div>
+                                <label>Warning at %</label>
+                                <input type="number" id="monthlyWarning-skills" value="80" min="0" max="100" onchange="saveCategoryLimit('skills')" />
+                            </div>
                         </div>
                     </div>
-                    <button class="btn" onclick="addMonthlyValue()" style="width: 100%;">Add Monthly Value</button>
+
+                    <!-- Monthly Input -->
+                    <div class="limits-subsection">
+                        <h4>Add Monthly Skills</h4>
+                        <div class="limit-input-group">
+                            <div>
+                                <label>Month (1-12)</label>
+                                <input type="number" id="monthNum-skills" min="1" max="12" placeholder="1-12" />
+                            </div>
+                            <div>
+                                <label>Count</label>
+                                <input type="number" id="monthValue-skills" placeholder="Skills learned" />
+                            </div>
+                        </div>
+                        <button class="btn" onclick="addCategoryValue('skills')" style="width: 100%;">Add Skills</button>
+                    </div>
                 </div>
 
-                <!-- Stats -->
-                <div class="value-stats">
-                    <div class="stat-card" id="weeklyCard">
-                        <div class="stat-label">Weekly Total</div>
-                        <div class="stat-value">$<span id="weeklyTotal">0</span></div>
-                        <div class="stat-limit" id="weeklyLimitText"></div>
+                <div class="category-content" id="content-memberships">
+                    <!-- Monthly Limits -->
+                    <div class="limits-subsection">
+                        <h4>📈 Monthly Target</h4>
+                        <div class="limit-input-group">
+                            <div>
+                                <label>Limit (Count)</label>
+                                <input type="number" id="monthlyLimit-memberships" placeholder="0" onchange="saveCategoryLimit('memberships')" />
+                            </div>
+                            <div>
+                                <label>Warning at %</label>
+                                <input type="number" id="monthlyWarning-memberships" value="80" min="0" max="100" onchange="saveCategoryLimit('memberships')" />
+                            </div>
+                        </div>
                     </div>
-                    <div class="stat-card" id="monthlyCard">
-                        <div class="stat-label">Monthly Total</div>
-                        <div class="stat-value">$<span id="monthlyTotal">0</span></div>
-                        <div class="stat-limit" id="monthlyLimitText"></div>
+
+                    <!-- Monthly Input -->
+                    <div class="limits-subsection">
+                        <h4>Add Monthly Memberships</h4>
+                        <div class="limit-input-group">
+                            <div>
+                                <label>Month (1-12)</label>
+                                <input type="number" id="monthNum-memberships" min="1" max="12" placeholder="1-12" />
+                            </div>
+                            <div>
+                                <label>Count</label>
+                                <input type="number" id="monthValue-memberships" placeholder="Orgs joined" />
+                            </div>
+                        </div>
+                        <button class="btn" onclick="addCategoryValue('memberships')" style="width: 100%;">Add Memberships</button>
                     </div>
                 </div>
-                <button class="btn" onclick="clearValueData()" style="width: 100%;">Clear Values</button>
+
+                <button class="btn" onclick="clearCategoryData()" style="width: 100%; margin-top: 15px;">Clear Current Category</button>
             </div>
         </div>
 
@@ -1125,6 +1301,14 @@
 
     <script>
         const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        const categories = ['monetary', 'certifications', 'skills', 'memberships'];
+        const categoryLabels = {
+            monetary: { name: 'Monetary', icon: '💰', unit: '$' },
+            certifications: { name: 'Certifications', icon: '🎓', unit: '' },
+            skills: { name: 'Skills', icon: '⚡', unit: '' },
+            memberships: { name: 'Memberships', icon: '🤝', unit: '' }
+        };
+        let currentCategory = 'monetary';
         let deferredPrompt;
         let monthlyTrendChart, yearOverviewChart, goalsProgressChart;
 
@@ -1148,6 +1332,114 @@
             localStorage.setItem('goalsV2', JSON.stringify(newGoals));
         }
 
+        function migrateCategories() {
+            // Check if already migrated
+            const migrated = localStorage.getItem('categoriesMigrated');
+            if (migrated) return;
+
+            // Migrate old monthlyValues to monetary category
+            const oldMonthlyValues = localStorage.getItem('monthlyValues');
+            if (oldMonthlyValues) {
+                localStorage.setItem('monthlyValues-monetary', oldMonthlyValues);
+            }
+
+            // Migrate old weeklyValues to monetary category
+            const oldWeeklyValues = localStorage.getItem('weeklyValues');
+            if (oldWeeklyValues) {
+                localStorage.setItem('weeklyValues-monetary', oldWeeklyValues);
+            }
+
+            // Migrate old limits
+            const oldMonthlyLimit = localStorage.getItem('monthlyLimit');
+            const oldMonthlyWarning = localStorage.getItem('monthlyWarning');
+            if (oldMonthlyLimit) {
+                localStorage.setItem('monthlyLimit-monetary', oldMonthlyLimit);
+            }
+            if (oldMonthlyWarning) {
+                localStorage.setItem('monthlyWarning-monetary', oldMonthlyWarning);
+            }
+
+            // Mark as migrated
+            localStorage.setItem('categoriesMigrated', 'true');
+        }
+
+        // Category Management
+        function switchCategory(category) {
+            currentCategory = category;
+
+            // Update tab active states
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`.category-tab.${category}`).classList.add('active');
+
+            // Update content visibility
+            document.querySelectorAll('.category-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`content-${category}`).classList.add('active');
+
+            // Load limits for this category
+            loadCategoryLimits(category);
+        }
+
+        function loadCategoryLimits(category) {
+            const limit = localStorage.getItem(`monthlyLimit-${category}`) || '';
+            const warning = localStorage.getItem(`monthlyWarning-${category}`) || '80';
+
+            const limitInput = document.getElementById(`monthlyLimit-${category}`);
+            const warningInput = document.getElementById(`monthlyWarning-${category}`);
+
+            if (limitInput) limitInput.value = limit;
+            if (warningInput) warningInput.value = warning;
+        }
+
+        function saveCategoryLimit(category) {
+            const limit = parseFloat(document.getElementById(`monthlyLimit-${category}`).value) || 0;
+            const warning = parseFloat(document.getElementById(`monthlyWarning-${category}`).value) || 80;
+
+            localStorage.setItem(`monthlyLimit-${category}`, limit);
+            localStorage.setItem(`monthlyWarning-${category}`, warning);
+
+            updateDashboard();
+            updateCharts();
+        }
+
+        function addCategoryValue(category) {
+            const monthNum = parseInt(document.getElementById(`monthNum-${category}`).value);
+            const value = parseFloat(document.getElementById(`monthValue-${category}`).value);
+
+            if (isNaN(monthNum) || isNaN(value) || monthNum < 1 || monthNum > 12) {
+                alert('Please enter valid month (1-12) and value');
+                return;
+            }
+
+            let monthlyData = JSON.parse(localStorage.getItem(`monthlyValues-${category}`)) || {};
+            monthlyData[`month_${monthNum}`] = value;
+            localStorage.setItem(`monthlyValues-${category}`, JSON.stringify(monthlyData));
+
+            document.getElementById(`monthNum-${category}`).value = '';
+            document.getElementById(`monthValue-${category}`).value = '';
+
+            updateDashboard();
+            updateCharts();
+            renderMonths();
+        }
+
+        function clearCategoryData() {
+            if (!confirm(`Clear all ${categoryLabels[currentCategory].name} data?`)) return;
+
+            localStorage.removeItem(`monthlyValues-${currentCategory}`);
+            localStorage.removeItem(`weeklyValues-${currentCategory}`);
+
+            document.getElementById(`monthNum-${currentCategory}`).value = '';
+            document.getElementById(`monthValue-${currentCategory}`).value = '';
+
+            updateDashboard();
+            updateCharts();
+            renderMonths();
+        }
+
         // Dashboard Functions
         function updateDashboard() {
             // Goal Completion Rate
@@ -1164,48 +1456,72 @@
             const goalRate = totalGoals > 0 ? ((completedGoals / totalGoals) * 100).toFixed(0) : 0;
             document.getElementById('goalCompletionRate').textContent = `${goalRate}%`;
 
-            // Year-to-Date Total
-            const monthlyData = JSON.parse(localStorage.getItem('monthlyValues')) || {};
-            const ytd = Object.values(monthlyData).reduce((sum, val) => sum + val, 0);
-            document.getElementById('ytdTotal').textContent = `$${ytd.toFixed(0)}`;
+            // Category totals
+            const categoryTotals = {};
+            categories.forEach(category => {
+                const monthlyData = JSON.parse(localStorage.getItem(`monthlyValues-${category}`)) || {};
+                const ytd = Object.values(monthlyData).reduce((sum, val) => sum + val, 0);
+                categoryTotals[category] = ytd;
 
-            // Average Monthly
-            const monthsWithData = Object.keys(monthlyData).length;
-            const avg = monthsWithData > 0 ? ytd / monthsWithData : 0;
-            document.getElementById('avgMonthly').textContent = `$${avg.toFixed(0)}`;
+                // Update category YTD cards
+                const unit = categoryLabels[category].unit;
+                document.getElementById(`ytd${category.charAt(0).toUpperCase() + category.slice(1)}`).textContent =
+                    `${unit}${ytd.toFixed(category === 'monetary' ? 0 : 0)}`;
+            });
 
-            // Best Month
-            let bestMonth = '-';
-            let maxValue = 0;
-            Object.entries(monthlyData).forEach(([key, value]) => {
-                if (value > maxValue) {
-                    maxValue = value;
-                    const monthNum = parseInt(key.replace('month_', ''));
-                    bestMonth = `${months[monthNum - 1]}: $${value.toFixed(0)}`;
+            // Average Monthly (Monetary)
+            const monetaryData = JSON.parse(localStorage.getItem('monthlyValues-monetary')) || {};
+            const monthsWithData = Object.keys(monetaryData).length;
+            const avg = monthsWithData > 0 ? categoryTotals.monetary / monthsWithData : 0;
+            document.getElementById('avgMonetary').textContent = `$${avg.toFixed(0)}`;
+
+            // Top Category (which category has most activity)
+            let topCategory = '-';
+            let maxCount = 0;
+            categories.forEach(category => {
+                const monthlyData = JSON.parse(localStorage.getItem(`monthlyValues-${category}`)) || {};
+                const count = Object.keys(monthlyData).length;
+                if (count > maxCount) {
+                    maxCount = count;
+                    topCategory = `${categoryLabels[category].icon} ${categoryLabels[category].name}`;
                 }
             });
-            document.getElementById('bestMonth').textContent = bestMonth;
+            document.getElementById('bestCategory').textContent = topCategory;
+
+            // Overall Progress (combination of goals completion and category activity)
+            const totalMonthsTracked = categories.reduce((sum, cat) => {
+                const data = JSON.parse(localStorage.getItem(`monthlyValues-${cat}`)) || {};
+                return sum + Object.keys(data).length;
+            }, 0);
+            const maxPossibleMonths = 12 * categories.length; // 12 months * 4 categories
+            const activityRate = maxPossibleMonths > 0 ? ((totalMonthsTracked / maxPossibleMonths) * 100).toFixed(0) : 0;
+            const overallProgress = ((parseInt(goalRate) + parseInt(activityRate)) / 2).toFixed(0);
+            document.getElementById('overallProgress').textContent = `${overallProgress}%`;
         }
 
         // Export/Import Functions
         function exportData() {
+            const categoryData = {};
+            categories.forEach(category => {
+                categoryData[category] = {
+                    monthlyValues: JSON.parse(localStorage.getItem(`monthlyValues-${category}`)) || {},
+                    weeklyValues: JSON.parse(localStorage.getItem(`weeklyValues-${category}`)) || {},
+                    monthlyLimit: localStorage.getItem(`monthlyLimit-${category}`) || '',
+                    monthlyWarning: localStorage.getItem(`monthlyWarning-${category}`) || '80'
+                };
+            });
+
             const data = {
-                version: '2.0',
+                version: '3.0', // Updated version for multi-category support
                 exportDate: new Date().toISOString(),
                 goals: JSON.parse(localStorage.getItem('goalsV2')) || [],
                 goalsLegacy: JSON.parse(localStorage.getItem('goals')) || [],
-                weeklyValues: JSON.parse(localStorage.getItem('weeklyValues')) || {},
-                monthlyValues: JSON.parse(localStorage.getItem('monthlyValues')) || {},
-                limits: {
-                    weeklyLimit: localStorage.getItem('weeklyLimit') || '',
-                    weeklyWarning: localStorage.getItem('weeklyWarning') || '80',
-                    monthlyLimit: localStorage.getItem('monthlyLimit') || '',
-                    monthlyWarning: localStorage.getItem('monthlyWarning') || '80'
-                },
+                categories: categoryData,
                 metadata: {
                     totalGoals: (JSON.parse(localStorage.getItem('goalsV2')) || []).length,
                     totalMilestones: (JSON.parse(localStorage.getItem('goalsV2')) || [])
-                        .reduce((sum, g) => sum + g.milestones.length, 0)
+                        .reduce((sum, g) => sum + g.milestones.length, 0),
+                    categoriesEnabled: categories.length
                 }
             };
 
@@ -1251,17 +1567,39 @@
                     if (data.goalsLegacy) {
                         localStorage.setItem('goals', JSON.stringify(data.goalsLegacy));
                     }
-                    if (data.weeklyValues) {
-                        localStorage.setItem('weeklyValues', JSON.stringify(data.weeklyValues));
-                    }
-                    if (data.monthlyValues) {
-                        localStorage.setItem('monthlyValues', JSON.stringify(data.monthlyValues));
-                    }
-                    if (data.limits) {
-                        localStorage.setItem('weeklyLimit', data.limits.weeklyLimit);
-                        localStorage.setItem('weeklyWarning', data.limits.weeklyWarning);
-                        localStorage.setItem('monthlyLimit', data.limits.monthlyLimit);
-                        localStorage.setItem('monthlyWarning', data.limits.monthlyWarning);
+
+                    // Import category data (v3.0+) or legacy data (v2.0)
+                    if (data.categories) {
+                        // New format with categories
+                        categories.forEach(category => {
+                            if (data.categories[category]) {
+                                const catData = data.categories[category];
+                                if (catData.monthlyValues) {
+                                    localStorage.setItem(`monthlyValues-${category}`, JSON.stringify(catData.monthlyValues));
+                                }
+                                if (catData.weeklyValues) {
+                                    localStorage.setItem(`weeklyValues-${category}`, JSON.stringify(catData.weeklyValues));
+                                }
+                                if (catData.monthlyLimit !== undefined) {
+                                    localStorage.setItem(`monthlyLimit-${category}`, catData.monthlyLimit);
+                                }
+                                if (catData.monthlyWarning !== undefined) {
+                                    localStorage.setItem(`monthlyWarning-${category}`, catData.monthlyWarning);
+                                }
+                            }
+                        });
+                    } else {
+                        // Legacy format (v2.0) - import as monetary
+                        if (data.weeklyValues) {
+                            localStorage.setItem('weeklyValues-monetary', JSON.stringify(data.weeklyValues));
+                        }
+                        if (data.monthlyValues) {
+                            localStorage.setItem('monthlyValues-monetary', JSON.stringify(data.monthlyValues));
+                        }
+                        if (data.limits) {
+                            localStorage.setItem('monthlyLimit-monetary', data.limits.monthlyLimit);
+                            localStorage.setItem('monthlyWarning-monetary', data.limits.monthlyWarning);
+                        }
                     }
 
                     alert('Data imported successfully!');
@@ -1367,11 +1705,10 @@
         // Initialize planner
         function initPlanner() {
             migrateGoalsToV2();
+            migrateCategories();
             renderMonths();
             loadGoals();
-            loadLimits();
-            loadValueData();
-            updateStats();
+            loadCategoryLimits('monetary'); // Load initial category
             updateOnlineStatus();
             updateDashboard();
             updateBackupInfo();
@@ -1691,42 +2028,41 @@
         }
 
         function initMonthlyTrendChart() {
-            const monthlyData = JSON.parse(localStorage.getItem('monthlyValues')) || {};
-            const data = months.map((m, i) => monthlyData[`month_${i + 1}`] || 0);
-            const limit = parseFloat(localStorage.getItem('monthlyLimit')) || 0;
-
             const ctx = document.getElementById('monthlyTrendChart');
             if (monthlyTrendChart) {
                 monthlyTrendChart.destroy();
             }
 
-            const datasets = [
-                {
-                    label: 'Monthly Value',
-                    data: data,
-                    borderColor: '#60a5fa',
-                    backgroundColor: 'rgba(96, 165, 250, 0.1)',
-                    tension: 0.4,
-                    fill: true,
-                    pointBackgroundColor: '#60a5fa',
-                    pointBorderColor: '#1e40af',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: '#60a5fa',
-                    pointRadius: 4,
-                    pointHoverRadius: 6
-                }
-            ];
+            const datasets = [];
+            const categoryColors = {
+                monetary: { border: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)' },
+                certifications: { border: '#a855f7', bg: 'rgba(168, 85, 247, 0.1)' },
+                skills: { border: '#22c55e', bg: 'rgba(34, 197, 94, 0.1)' },
+                memberships: { border: '#f97316', bg: 'rgba(249, 115, 22, 0.1)' }
+            };
 
-            if (limit > 0) {
-                datasets.push({
-                    label: 'Monthly Limit',
-                    data: Array(12).fill(limit),
-                    borderColor: '#ef4444',
-                    borderDash: [5, 5],
-                    pointRadius: 0,
-                    fill: false
-                });
-            }
+            categories.forEach(category => {
+                const monthlyData = JSON.parse(localStorage.getItem(`monthlyValues-${category}`)) || {};
+                const data = months.map((m, i) => monthlyData[`month_${i + 1}`] || 0);
+                const hasData = data.some(v => v > 0);
+
+                if (hasData) {
+                    datasets.push({
+                        label: categoryLabels[category].icon + ' ' + categoryLabels[category].name,
+                        data: data,
+                        borderColor: categoryColors[category].border,
+                        backgroundColor: categoryColors[category].bg,
+                        tension: 0.4,
+                        fill: false,
+                        pointBackgroundColor: categoryColors[category].border,
+                        pointBorderColor: categoryColors[category].border,
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: categoryColors[category].border,
+                        pointRadius: 3,
+                        pointHoverRadius: 5
+                    });
+                }
+            });
 
             monthlyTrendChart = new Chart(ctx, {
                 type: 'line',
@@ -1736,12 +2072,12 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            labels: { color: '#e2e8f0', font: { size: 12 } }
+                            labels: { color: '#e2e8f0', font: { size: 11 } }
                         },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return context.dataset.label + ': $' + context.parsed.y.toFixed(0);
+                                    return context.dataset.label + ': ' + context.parsed.y.toFixed(0);
                                 }
                             }
                         }
@@ -1749,12 +2085,7 @@
                     scales: {
                         y: {
                             beginAtZero: true,
-                            ticks: {
-                                color: '#94a3b8',
-                                callback: function(value) {
-                                    return '$' + value;
-                                }
-                            },
+                            ticks: { color: '#94a3b8' },
                             grid: { color: 'rgba(59, 130, 246, 0.1)' }
                         },
                         x: {
@@ -1767,63 +2098,65 @@
         }
 
         function initYearOverviewChart() {
-            const monthlyData = JSON.parse(localStorage.getItem('monthlyValues')) || {};
-            const monthlyLimit = parseFloat(localStorage.getItem('monthlyLimit')) || 0;
-            const monthlyWarning = parseFloat(localStorage.getItem('monthlyWarning')) || 80;
-
-            const data = months.map((m, i) => monthlyData[`month_${i + 1}`] || 0);
-            const backgroundColors = data.map(value => {
-                if (monthlyLimit === 0) return '#60a5fa';
-                const percentage = (value / monthlyLimit) * 100;
-                if (percentage > 100) return '#ef4444';
-                if (percentage > monthlyWarning) return '#eab308';
-                return '#22c55e';
-            });
-
             const ctx = document.getElementById('yearOverviewChart');
             if (yearOverviewChart) {
                 yearOverviewChart.destroy();
             }
 
+            const datasets = [];
+            const categoryColors = {
+                monetary: '#3b82f6',
+                certifications: '#a855f7',
+                skills: '#22c55e',
+                memberships: '#f97316'
+            };
+
+            categories.forEach(category => {
+                const monthlyData = JSON.parse(localStorage.getItem(`monthlyValues-${category}`)) || {};
+                const data = months.map((m, i) => monthlyData[`month_${i + 1}`] || 0);
+                const hasData = data.some(v => v > 0);
+
+                if (hasData) {
+                    datasets.push({
+                        label: categoryLabels[category].icon + ' ' + categoryLabels[category].name,
+                        data: data,
+                        backgroundColor: categoryColors[category],
+                        borderColor: categoryColors[category],
+                        borderWidth: 1
+                    });
+                }
+            });
+
             yearOverviewChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: months,
-                    datasets: [{
-                        label: 'Monthly Value',
-                        data: data,
-                        backgroundColor: backgroundColors,
-                        borderColor: backgroundColors,
-                        borderWidth: 1
-                    }]
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            labels: { color: '#e2e8f0', font: { size: 12 } }
+                            labels: { color: '#e2e8f0', font: { size: 11 } }
                         },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return 'Value: $' + context.parsed.y.toFixed(0);
+                                    return context.dataset.label + ': ' + context.parsed.y.toFixed(0);
                                 }
                             }
                         }
                     },
                     scales: {
                         y: {
+                            stacked: true,
                             beginAtZero: true,
-                            ticks: {
-                                color: '#94a3b8',
-                                callback: function(value) {
-                                    return '$' + value;
-                                }
-                            },
+                            ticks: { color: '#94a3b8' },
                             grid: { color: 'rgba(59, 130, 246, 0.1)' }
                         },
                         x: {
+                            stacked: true,
                             ticks: { color: '#94a3b8' },
                             grid: { color: 'rgba(59, 130, 246, 0.1)' }
                         }
