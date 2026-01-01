@@ -12,6 +12,7 @@
     <link rel="manifest" href="data:application/json,{%22name%22:%222026%20Year%20Planner%22,%22short_name%22:%222026%20Planner%22,%22description%22:%22Personal%20goal%20setting%20and%20value%20tracking%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22background_color%22:%22%230f172a%22,%22theme_color%22:%22%232563eb%22,%22orientation%22:%22portrait-primary%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20192%20192'><rect%20fill='%232563eb'%20width='192'%20height='192'/><text%20x='50%25'%20y='50%25'%20font-size='100'%20fill='white'%20text-anchor='middle'%20dy='.3em'%20font-family='Arial'%20font-weight='bold'>26</text></svg>%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg+xml%22,%22purpose%22:%22any%22},{%22src%22:%22data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20512%20512'><rect%20fill='%232563eb'%20width='512'%20height='512'/><text%20x='50%25'%20y='50%25'%20font-size='280'%20fill='white'%20text-anchor='middle'%20dy='.3em'%20font-family='Arial'%20font-weight='bold'>26</text></svg>%22,%22sizes%22:%22512x512%22,%22type%22:%22image/svg+xml%22,%22purpose%22:%22maskable%22}]}">
     <title>2026 Year Planner</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -560,6 +561,368 @@
                 justify-content: center;
             }
         }
+
+        /* Dashboard Section */
+        .dashboard-section {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .dashboard-card {
+            background: linear-gradient(135deg,
+                rgba(37, 99, 235, 0.1) 0%,
+                rgba(30, 64, 175, 0.1) 100%);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(96, 165, 250, 0.15);
+            border-color: #60a5fa;
+        }
+
+        .dashboard-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .dashboard-value {
+            font-family: 'Poppins', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .dashboard-label {
+            font-size: 13px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        /* Charts Section */
+        .charts-section {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.6s ease-out 0.1s both;
+        }
+
+        .chart-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .chart-tab {
+            padding: 10px 20px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .chart-tab:hover {
+            border-color: #60a5fa;
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .chart-tab.active {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            display: none;
+        }
+
+        .chart-container.active {
+            display: block;
+        }
+
+        /* Enhanced Goals with Milestones */
+        .goal-item {
+            background: rgba(15, 23, 42, 0.6);
+            border-left: 3px solid #60a5fa;
+            border-radius: 6px;
+            padding: 12px 16px;
+            transition: all 0.3s ease;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 4px 0;
+            user-select: none;
+        }
+
+        .goal-header:hover .goal-title {
+            color: #60a5fa;
+        }
+
+        .goal-progress-indicator {
+            font-size: 11px;
+            color: #60a5fa;
+            background: rgba(96, 165, 250, 0.1);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .goal-content {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(59, 130, 246, 0.2);
+            display: none;
+        }
+
+        .goal-content.expanded {
+            display: block;
+        }
+
+        .progress-bar-container {
+            position: relative;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 8px;
+            height: 28px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+            transition: width 0.3s ease;
+            min-width: 0%;
+        }
+
+        .progress-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            line-height: 28px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #e2e8f0;
+            z-index: 1;
+        }
+
+        .milestone-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .milestone-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 6px;
+            transition: background 0.2s ease;
+        }
+
+        .milestone-item:hover {
+            background: rgba(15, 23, 42, 0.6);
+        }
+
+        .milestone-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .milestone-item span {
+            flex: 1;
+            font-size: 14px;
+            word-break: break-word;
+        }
+
+        .milestone-item span.completed {
+            text-decoration: line-through;
+            color: #64748b;
+        }
+
+        .milestone-item button {
+            background: none;
+            border: none;
+            color: #ef4444;
+            font-size: 22px;
+            cursor: pointer;
+            padding: 0 6px;
+            line-height: 1;
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .milestone-item button:hover {
+            transform: scale(1.2);
+        }
+
+        .add-milestone {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .add-milestone input {
+            flex: 1;
+            font-size: 13px;
+            padding: 10px 14px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            color: #e2e8f0;
+        }
+
+        .add-milestone input:focus {
+            outline: none;
+            border-color: #60a5fa;
+            background: rgba(15, 23, 42, 0.95);
+            box-shadow: 0 0 12px rgba(96, 165, 250, 0.2);
+        }
+
+        .add-milestone button {
+            padding: 10px 18px;
+            font-size: 13px;
+        }
+
+        .btn-delete {
+            width: 100%;
+            padding: 10px;
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-delete:hover {
+            background: rgba(239, 68, 68, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Export/Import Section */
+        .export-section {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.6s ease-out 0.4s both;
+        }
+
+        .export-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-export, .btn-import {
+            flex: 0 0 auto;
+            cursor: pointer;
+        }
+
+        .backup-info {
+            flex: 1;
+            text-align: right;
+            font-size: 13px;
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        /* Mobile Responsive Updates */
+        @media (max-width: 640px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .dashboard-card {
+                padding: 18px;
+            }
+
+            .dashboard-icon {
+                font-size: 24px;
+            }
+
+            .dashboard-value {
+                font-size: 24px;
+            }
+
+            .dashboard-label {
+                font-size: 11px;
+            }
+
+            .chart-container {
+                height: 300px;
+            }
+
+            .chart-tabs {
+                gap: 8px;
+            }
+
+            .chart-tab {
+                padding: 8px 14px;
+                font-size: 12px;
+            }
+
+            .export-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .backup-info {
+                text-align: center;
+            }
+
+            .btn-export, .btn-import {
+                width: 100%;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -575,6 +938,52 @@
         <div class="header">
             <h1>2026 Year Planner</h1>
             <p>Set your goals and track value delivered throughout the year <button onclick="document.getElementById('infoModal').style.display='flex'" style="background: none; border: none; color: #60a5fa; cursor: pointer; font-size: 16px; margin-left: 10px;">❓</button></p>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div class="dashboard-section">
+            <div class="section-title">Year Overview</div>
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <div class="dashboard-icon">🎯</div>
+                    <div class="dashboard-value" id="goalCompletionRate">0%</div>
+                    <div class="dashboard-label">Goals Completed</div>
+                </div>
+                <div class="dashboard-card">
+                    <div class="dashboard-icon">💰</div>
+                    <div class="dashboard-value" id="ytdTotal">$0</div>
+                    <div class="dashboard-label">Year-to-Date Total</div>
+                </div>
+                <div class="dashboard-card">
+                    <div class="dashboard-icon">📊</div>
+                    <div class="dashboard-value" id="avgMonthly">$0</div>
+                    <div class="dashboard-label">Average Monthly</div>
+                </div>
+                <div class="dashboard-card">
+                    <div class="dashboard-icon">⭐</div>
+                    <div class="dashboard-value" id="bestMonth">-</div>
+                    <div class="dashboard-label">Best Month</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="section-title">Analytics</div>
+            <div class="chart-tabs">
+                <div class="chart-tab active" onclick="switchChartTab('trend')">Monthly Trends</div>
+                <div class="chart-tab" onclick="switchChartTab('overview')">Year Overview</div>
+                <div class="chart-tab" onclick="switchChartTab('goals')">Goals Progress</div>
+            </div>
+            <div class="chart-container active" id="chart-trend">
+                <canvas id="monthlyTrendChart"></canvas>
+            </div>
+            <div class="chart-container" id="chart-overview">
+                <canvas id="yearOverviewChart"></canvas>
+            </div>
+            <div class="chart-container" id="chart-goals">
+                <canvas id="goalsProgressChart"></canvas>
+            </div>
         </div>
 
         <!-- Main Planning Grid -->
@@ -678,6 +1087,17 @@
             <div class="months-grid" id="monthsGrid"></div>
         </div>
 
+        <!-- Export/Import Section -->
+        <div class="export-section">
+            <div class="section-title">Backup & Restore</div>
+            <div class="export-controls">
+                <button class="btn btn-export" onclick="exportData()">📥 Download Backup</button>
+                <label for="importFile" class="btn btn-import">📤 Import Backup</label>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+                <div class="backup-info" id="backupInfo">Last backup: Never</div>
+            </div>
+        </div>
+
         <!-- Footer -->
         <div class="footer">
             <div class="online-status" id="onlineStatus">
@@ -706,6 +1126,164 @@
     <script>
         const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         let deferredPrompt;
+        let monthlyTrendChart, yearOverviewChart, goalsProgressChart;
+
+        // Data Migration
+        function migrateGoalsToV2() {
+            const oldGoals = JSON.parse(localStorage.getItem('goals')) || [];
+            const existingV2 = localStorage.getItem('goalsV2');
+
+            // If V2 already exists, don't migrate again
+            if (existingV2) return;
+
+            // Convert old format to new format
+            const newGoals = oldGoals.map((goalText, index) => ({
+                id: `goal_${Date.now() + index}`,
+                title: goalText,
+                milestones: [],
+                createdAt: Date.now() + index,
+                completedAt: null
+            }));
+
+            localStorage.setItem('goalsV2', JSON.stringify(newGoals));
+        }
+
+        // Dashboard Functions
+        function updateDashboard() {
+            // Goal Completion Rate
+            const goals = JSON.parse(localStorage.getItem('goalsV2')) || [];
+            const totalGoals = goals.length;
+            let completedGoals = 0;
+
+            goals.forEach(goal => {
+                if (goal.milestones.length === 0) return;
+                const allComplete = goal.milestones.every(m => m.completed);
+                if (allComplete) completedGoals++;
+            });
+
+            const goalRate = totalGoals > 0 ? ((completedGoals / totalGoals) * 100).toFixed(0) : 0;
+            document.getElementById('goalCompletionRate').textContent = `${goalRate}%`;
+
+            // Year-to-Date Total
+            const monthlyData = JSON.parse(localStorage.getItem('monthlyValues')) || {};
+            const ytd = Object.values(monthlyData).reduce((sum, val) => sum + val, 0);
+            document.getElementById('ytdTotal').textContent = `$${ytd.toFixed(0)}`;
+
+            // Average Monthly
+            const monthsWithData = Object.keys(monthlyData).length;
+            const avg = monthsWithData > 0 ? ytd / monthsWithData : 0;
+            document.getElementById('avgMonthly').textContent = `$${avg.toFixed(0)}`;
+
+            // Best Month
+            let bestMonth = '-';
+            let maxValue = 0;
+            Object.entries(monthlyData).forEach(([key, value]) => {
+                if (value > maxValue) {
+                    maxValue = value;
+                    const monthNum = parseInt(key.replace('month_', ''));
+                    bestMonth = `${months[monthNum - 1]}: $${value.toFixed(0)}`;
+                }
+            });
+            document.getElementById('bestMonth').textContent = bestMonth;
+        }
+
+        // Export/Import Functions
+        function exportData() {
+            const data = {
+                version: '2.0',
+                exportDate: new Date().toISOString(),
+                goals: JSON.parse(localStorage.getItem('goalsV2')) || [],
+                goalsLegacy: JSON.parse(localStorage.getItem('goals')) || [],
+                weeklyValues: JSON.parse(localStorage.getItem('weeklyValues')) || {},
+                monthlyValues: JSON.parse(localStorage.getItem('monthlyValues')) || {},
+                limits: {
+                    weeklyLimit: localStorage.getItem('weeklyLimit') || '',
+                    weeklyWarning: localStorage.getItem('weeklyWarning') || '80',
+                    monthlyLimit: localStorage.getItem('monthlyLimit') || '',
+                    monthlyWarning: localStorage.getItem('monthlyWarning') || '80'
+                },
+                metadata: {
+                    totalGoals: (JSON.parse(localStorage.getItem('goalsV2')) || []).length,
+                    totalMilestones: (JSON.parse(localStorage.getItem('goalsV2')) || [])
+                        .reduce((sum, g) => sum + g.milestones.length, 0)
+                }
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `year-planner-backup-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            // Save last backup date
+            localStorage.setItem('lastBackupDate', Date.now());
+            updateBackupInfo();
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+
+                    // Validate data structure
+                    if (!data.version) {
+                        throw new Error('Invalid backup file format');
+                    }
+
+                    // Confirm before overwriting
+                    if (!confirm('This will replace all current data. Continue?')) {
+                        event.target.value = '';
+                        return;
+                    }
+
+                    // Import data
+                    if (data.goals) {
+                        localStorage.setItem('goalsV2', JSON.stringify(data.goals));
+                    }
+                    if (data.goalsLegacy) {
+                        localStorage.setItem('goals', JSON.stringify(data.goalsLegacy));
+                    }
+                    if (data.weeklyValues) {
+                        localStorage.setItem('weeklyValues', JSON.stringify(data.weeklyValues));
+                    }
+                    if (data.monthlyValues) {
+                        localStorage.setItem('monthlyValues', JSON.stringify(data.monthlyValues));
+                    }
+                    if (data.limits) {
+                        localStorage.setItem('weeklyLimit', data.limits.weeklyLimit);
+                        localStorage.setItem('weeklyWarning', data.limits.weeklyWarning);
+                        localStorage.setItem('monthlyLimit', data.limits.monthlyLimit);
+                        localStorage.setItem('monthlyWarning', data.limits.monthlyWarning);
+                    }
+
+                    alert('Data imported successfully!');
+                    location.reload();
+                } catch (error) {
+                    alert('Error importing backup: ' + error.message);
+                    event.target.value = '';
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function updateBackupInfo() {
+            const lastBackup = localStorage.getItem('lastBackupDate');
+            const info = document.getElementById('backupInfo');
+            if (lastBackup) {
+                const date = new Date(parseInt(lastBackup));
+                info.textContent = `Last backup: ${date.toLocaleDateString()}`;
+            } else {
+                info.textContent = 'Last backup: Never';
+            }
+        }
 
         // PWA Installation
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -753,25 +1331,43 @@
 
         // Initialize planner
         function initPlanner() {
+            migrateGoalsToV2();
             renderMonths();
             loadGoals();
             loadLimits();
             loadValueData();
             updateStats();
             updateOnlineStatus();
+            updateDashboard();
+            updateBackupInfo();
+            updateCharts();
         }
 
         // Goals Management
         function addGoal() {
             const input = document.getElementById('goalInput');
-            const goal = input.value.trim();
-            if (!goal) return;
+            const goalTitle = input.value.trim();
+            if (!goalTitle) return;
 
-            let goals = JSON.parse(localStorage.getItem('goals')) || [];
-            goals.push(goal);
-            localStorage.setItem('goals', JSON.stringify(goals));
+            let goals = JSON.parse(localStorage.getItem('goalsV2')) || [];
+            const newGoal = {
+                id: `goal_${Date.now()}`,
+                title: goalTitle,
+                milestones: [],
+                createdAt: Date.now(),
+                completedAt: null
+            };
+            goals.push(newGoal);
+            localStorage.setItem('goalsV2', JSON.stringify(goals));
+
+            // Also update legacy format for backward compatibility
+            let legacyGoals = JSON.parse(localStorage.getItem('goals')) || [];
+            legacyGoals.push(goalTitle);
+            localStorage.setItem('goals', JSON.stringify(legacyGoals));
+
             input.value = '';
             renderGoals();
+            updateDashboard();
         }
 
         function loadGoals() {
@@ -779,26 +1375,131 @@
         }
 
         function renderGoals() {
-            const goals = JSON.parse(localStorage.getItem('goals')) || [];
+            const goals = JSON.parse(localStorage.getItem('goalsV2')) || [];
             const goalsList = document.getElementById('goalsList');
             goalsList.innerHTML = '';
 
-            goals.forEach((goal, index) => {
+            goals.forEach((goal) => {
+                const completedMilestones = goal.milestones.filter(m => m.completed).length;
+                const totalMilestones = goal.milestones.length;
+                const progress = totalMilestones > 0
+                    ? (completedMilestones / totalMilestones * 100).toFixed(0)
+                    : 0;
+
                 const div = document.createElement('div');
                 div.className = 'goal-item';
                 div.innerHTML = `
-                    <span>${goal}</span>
-                    <button onclick="deleteGoal(${index})">Delete</button>
+                    <div class="goal-header" onclick="toggleGoal('${goal.id}')">
+                        <span class="goal-title">${goal.title}</span>
+                        <span class="goal-progress-indicator">
+                            ${totalMilestones > 0 ? `${completedMilestones}/${totalMilestones}` : 'No milestones'}
+                        </span>
+                    </div>
+                    <div class="goal-content" id="goal-${goal.id}">
+                        ${totalMilestones > 0 ? `
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: ${progress}%"></div>
+                                <span class="progress-text">${progress}% Complete</span>
+                            </div>
+                        ` : ''}
+                        <div class="milestone-list">
+                            ${goal.milestones.map(m => `
+                                <div class="milestone-item">
+                                    <input type="checkbox" ${m.completed ? 'checked' : ''}
+                                        onchange="toggleMilestone('${goal.id}', '${m.id}')">
+                                    <span class="${m.completed ? 'completed' : ''}">${m.text}</span>
+                                    <button onclick="deleteMilestone('${goal.id}', '${m.id}')">×</button>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="add-milestone">
+                            <input type="text" id="milestone-input-${goal.id}" placeholder="Add milestone...">
+                            <button class="btn" onclick="addMilestone('${goal.id}')">Add</button>
+                        </div>
+                        <button class="btn-delete" onclick="deleteGoal('${goal.id}')">Delete Goal</button>
+                    </div>
                 `;
                 goalsList.appendChild(div);
             });
         }
 
-        function deleteGoal(index) {
-            let goals = JSON.parse(localStorage.getItem('goals')) || [];
-            goals.splice(index, 1);
-            localStorage.setItem('goals', JSON.stringify(goals));
+        function toggleGoal(goalId) {
+            const content = document.getElementById(`goal-${goalId}`);
+            content.classList.toggle('expanded');
+        }
+
+        function addMilestone(goalId) {
+            const input = document.getElementById(`milestone-input-${goalId}`);
+            const text = input.value.trim();
+            if (!text) return;
+
+            const goals = JSON.parse(localStorage.getItem('goalsV2')) || [];
+            const goal = goals.find(g => g.id === goalId);
+            if (!goal) return;
+
+            goal.milestones.push({
+                id: `milestone_${Date.now()}`,
+                text: text,
+                completed: false,
+                createdAt: Date.now()
+            });
+
+            localStorage.setItem('goalsV2', JSON.stringify(goals));
+            input.value = '';
             renderGoals();
+            updateDashboard();
+        }
+
+        function toggleMilestone(goalId, milestoneId) {
+            const goals = JSON.parse(localStorage.getItem('goalsV2')) || [];
+            const goal = goals.find(g => g.id === goalId);
+            if (!goal) return;
+
+            const milestone = goal.milestones.find(m => m.id === milestoneId);
+            if (!milestone) return;
+
+            milestone.completed = !milestone.completed;
+
+            // Check if all milestones completed
+            const allComplete = goal.milestones.length > 0 && goal.milestones.every(m => m.completed);
+            goal.completedAt = allComplete ? Date.now() : null;
+
+            localStorage.setItem('goalsV2', JSON.stringify(goals));
+            renderGoals();
+            updateDashboard();
+            updateCharts();
+        }
+
+        function deleteMilestone(goalId, milestoneId) {
+            if (!confirm('Delete this milestone?')) return;
+
+            const goals = JSON.parse(localStorage.getItem('goalsV2')) || [];
+            const goal = goals.find(g => g.id === goalId);
+            if (!goal) return;
+
+            goal.milestones = goal.milestones.filter(m => m.id !== milestoneId);
+            goal.completedAt = null;
+
+            localStorage.setItem('goalsV2', JSON.stringify(goals));
+            renderGoals();
+            updateDashboard();
+            updateCharts();
+        }
+
+        function deleteGoal(goalId) {
+            if (!confirm('Delete this goal and all its milestones?')) return;
+
+            let goals = JSON.parse(localStorage.getItem('goalsV2')) || [];
+            goals = goals.filter(g => g.id !== goalId);
+            localStorage.setItem('goalsV2', JSON.stringify(goals));
+
+            // Also update legacy format
+            const legacyGoals = goals.map(g => g.title);
+            localStorage.setItem('goals', JSON.stringify(legacyGoals));
+
+            renderGoals();
+            updateDashboard();
+            updateCharts();
         }
 
         // Limits Management
@@ -818,6 +1519,7 @@
             localStorage.setItem('monthlyWarning', warning);
             updateStats();
             renderMonths();
+            updateCharts();
         }
 
         function loadLimits() {
@@ -868,6 +1570,8 @@
             document.getElementById('monthValue').value = '';
             updateStats();
             renderMonths();
+            updateDashboard();
+            updateCharts();
         }
 
         function loadValueData() {
@@ -932,6 +1636,229 @@
             document.getElementById('monthValue').value = '';
             updateStats();
             renderMonths();
+            updateDashboard();
+            updateCharts();
+        }
+
+        // Charts Functions
+        function switchChartTab(tabName) {
+            // Update tab active state
+            document.querySelectorAll('.chart-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update chart container visibility
+            document.querySelectorAll('.chart-container').forEach(container => {
+                container.classList.remove('active');
+            });
+            document.getElementById(`chart-${tabName}`).classList.add('active');
+        }
+
+        function initMonthlyTrendChart() {
+            const monthlyData = JSON.parse(localStorage.getItem('monthlyValues')) || {};
+            const data = months.map((m, i) => monthlyData[`month_${i + 1}`] || 0);
+            const limit = parseFloat(localStorage.getItem('monthlyLimit')) || 0;
+
+            const ctx = document.getElementById('monthlyTrendChart');
+            if (monthlyTrendChart) {
+                monthlyTrendChart.destroy();
+            }
+
+            const datasets = [
+                {
+                    label: 'Monthly Value',
+                    data: data,
+                    borderColor: '#60a5fa',
+                    backgroundColor: 'rgba(96, 165, 250, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#60a5fa',
+                    pointBorderColor: '#1e40af',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#60a5fa',
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }
+            ];
+
+            if (limit > 0) {
+                datasets.push({
+                    label: 'Monthly Limit',
+                    data: Array(12).fill(limit),
+                    borderColor: '#ef4444',
+                    borderDash: [5, 5],
+                    pointRadius: 0,
+                    fill: false
+                });
+            }
+
+            monthlyTrendChart = new Chart(ctx, {
+                type: 'line',
+                data: { labels: months, datasets: datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#e2e8f0', font: { size: 12 } }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': $' + context.parsed.y.toFixed(0);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#94a3b8',
+                                callback: function(value) {
+                                    return '$' + value;
+                                }
+                            },
+                            grid: { color: 'rgba(59, 130, 246, 0.1)' }
+                        },
+                        x: {
+                            ticks: { color: '#94a3b8' },
+                            grid: { color: 'rgba(59, 130, 246, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function initYearOverviewChart() {
+            const monthlyData = JSON.parse(localStorage.getItem('monthlyValues')) || {};
+            const monthlyLimit = parseFloat(localStorage.getItem('monthlyLimit')) || 0;
+            const monthlyWarning = parseFloat(localStorage.getItem('monthlyWarning')) || 80;
+
+            const data = months.map((m, i) => monthlyData[`month_${i + 1}`] || 0);
+            const backgroundColors = data.map(value => {
+                if (monthlyLimit === 0) return '#60a5fa';
+                const percentage = (value / monthlyLimit) * 100;
+                if (percentage > 100) return '#ef4444';
+                if (percentage > monthlyWarning) return '#eab308';
+                return '#22c55e';
+            });
+
+            const ctx = document.getElementById('yearOverviewChart');
+            if (yearOverviewChart) {
+                yearOverviewChart.destroy();
+            }
+
+            yearOverviewChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Monthly Value',
+                        data: data,
+                        backgroundColor: backgroundColors,
+                        borderColor: backgroundColors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#e2e8f0', font: { size: 12 } }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Value: $' + context.parsed.y.toFixed(0);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#94a3b8',
+                                callback: function(value) {
+                                    return '$' + value;
+                                }
+                            },
+                            grid: { color: 'rgba(59, 130, 246, 0.1)' }
+                        },
+                        x: {
+                            ticks: { color: '#94a3b8' },
+                            grid: { color: 'rgba(59, 130, 246, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function initGoalsProgressChart() {
+            const goals = JSON.parse(localStorage.getItem('goalsV2')) || [];
+            let completedGoals = 0;
+            let incompleteGoals = 0;
+
+            goals.forEach(goal => {
+                if (goal.milestones.length === 0) {
+                    incompleteGoals++;
+                } else {
+                    const allComplete = goal.milestones.every(m => m.completed);
+                    if (allComplete) {
+                        completedGoals++;
+                    } else {
+                        incompleteGoals++;
+                    }
+                }
+            });
+
+            const ctx = document.getElementById('goalsProgressChart');
+            if (goalsProgressChart) {
+                goalsProgressChart.destroy();
+            }
+
+            goalsProgressChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'In Progress'],
+                    datasets: [{
+                        data: [completedGoals, incompleteGoals],
+                        backgroundColor: ['#22c55e', '#64748b'],
+                        borderColor: ['#16a34a', '#475569'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#e2e8f0', font: { size: 12 }, padding: 20 }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const total = completedGoals + incompleteGoals;
+                                    const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(0) : 0;
+                                    return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateCharts() {
+            if (typeof Chart !== 'undefined') {
+                initMonthlyTrendChart();
+                initYearOverviewChart();
+                initGoalsProgressChart();
+            }
         }
 
         // Months Grid
@@ -986,6 +1913,8 @@
             localStorage.setItem('monthlyValues', JSON.stringify(monthlyData));
             updateStats();
             renderMonths();
+            updateDashboard();
+            updateCharts();
         }
 
         // Clear all data
